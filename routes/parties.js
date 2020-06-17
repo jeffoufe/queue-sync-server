@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const ObjectID = require('mongodb').ObjectID;
+const YoutubeMp3Downloader = require("youtube-mp3-downloader");
 
 const getParty = async (req) => {
     const parties = await req.app.locals.parties.find(ObjectID(req.params.id)).toArray();
@@ -31,6 +32,7 @@ router.get('/:id', async (req, res) => {
 })
 
 router.post('/:id/track', async (req, res) => {
+    const track = req.body.track;
     await req.app.locals.parties.updateOne(
         { _id: ObjectID(req.params.id) },
         { $push: { tracks: req.body.track } }
@@ -40,7 +42,6 @@ router.post('/:id/track', async (req, res) => {
 })
 
 router.delete('/:id/track/:trackId', async (req, res) => {
-    console.log('prout');
     await req.app.locals.parties.update(
         { _id: ObjectID(req.params.id) },
         { $pull: { tracks: { id: req.params.trackId } } },
