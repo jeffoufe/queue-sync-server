@@ -5,9 +5,16 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 
 var indexRouter = require('./routes/index');
-var queuesRouter = require('./routes/queues');
+var partiesRouter = require('./routes/parties');
 
 var app = express();
+
+const MongoClient = require('mongodb').MongoClient;
+const uri = "mongodb+srv://jeffoufe:Laporeille51@cluster0-wkpnb.mongodb.net/test?retryWrites=true&w=majority";
+const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
+client.connect(async (err) => {
+  app.locals.parties = client.db('QueueSync').collection('parties');
+});
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -20,7 +27,7 @@ app.use(cookieParser());
 // app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
-app.use('/queues', queuesRouter);
+app.use('/parties', partiesRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
