@@ -3,17 +3,20 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
+const MongoClient = require('mongodb').MongoClient;
 
 var indexRouter = require('./routes/index');
 var partiesRouter = require('./routes/parties');
+var playlistsRouter = require('./routes/playlists');
 
 var app = express();
 
-const MongoClient = require('mongodb').MongoClient;
 const uri = "mongodb+srv://jeffoufe:Laporeille51@cluster0-wkpnb.mongodb.net/test?retryWrites=true&w=majority";
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
+
 client.connect(async (err) => {
   app.locals.parties = client.db('QueueSync').collection('parties');
+  app.locals.playlists = client.db('QueueSync').collection('playlists');
 });
 
 // view engine setup
@@ -27,6 +30,7 @@ app.use(cookieParser());
 
 app.use('/', indexRouter);
 app.use('/parties', partiesRouter);
+app.use('/parties/:userId/playlists', playlistsRouter)
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

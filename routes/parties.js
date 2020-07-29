@@ -3,11 +3,7 @@ const router = express.Router();
 const ObjectID = require('mongodb').ObjectID;
 const fs = require('fs');
 const YoutubeMp3Downloader = require("youtube-mp3-downloader");
-
-const getParty = async (req) => {
-    const parties = await req.app.locals.parties.find(ObjectID(req.params.id)).toArray();
-    return parties[0]; 
-};
+const getParty = require('../utils/getParty');
 
 router.get('/', async (req, res, next) => {
     const parties = await req.app.locals.parties.find({}).toArray();
@@ -17,6 +13,8 @@ router.get('/', async (req, res, next) => {
 router.post('/', async (req, res) => {
     await req.app.locals.parties.insertOne({ 
         tracks: [],
+        soundCloudPlaylists: [],
+        playlists: [],
         name: req.body.name,
         users: [{ name: req.body.hostName || 'Admin', isHost: true }]
     }, (error, documentInserted) => {
@@ -94,4 +92,22 @@ router.delete('/:id/track/:trackId', async (req, res) => {
     res.json(party);
 })
 
-module.exports = router;
+router.post('/:id/sc-playlists', async (req, res) => {
+    const { playlist: { image, ...rest } } = req.body;
+    const formattedPlaylist = {
+        ...rest,
+        images: [{ url: image }]
+    }
+    await req.app.locals.parties.updateOne(
+        { _id: ObjectID(req.params.id) },
+        { $push: { soundCloudPlaylists: formattedPlaylist } }
+    )
+    res.end()
+})
+
+router.get('/:id/sc-playlists', async (req, res) => {
+    const { soundCloudPlaylists } = await getParty(req);
+    res.json({ items: soundCloudPlaylists });
+})
+
+module.exports = router
