@@ -6,12 +6,12 @@ var logger = require('morgan');
 const MongoClient = require('mongodb').MongoClient;
 
 var indexRouter = require('./routes/index');
-var partiesRouter = require('./routes/parties');
-var playlistsRouter = require('./routes/playlists');
+/* var partiesRouter = require('./routes/parties');
+var playlistsRouter = require('./routes/playlists'); */
 
 var app = express();
 
-app.use(express.static(path.join(__dirname, 'public'))); 
+/* app.use(express.static(path.join(__dirname, 'public'))); 
 
 const uri = "mongodb+srv://jeffoufe:Laporeille51@cluster0-wkpnb.mongodb.net/test?retryWrites=true&w=majority";
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
@@ -19,7 +19,7 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
 client.connect(async (err) => {
   app.locals.parties = client.db('QueueSync').collection('parties');
   app.locals.playlists = client.db('QueueSync').collection('playlists');
-});
+}); */
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -49,7 +49,5 @@ app.use(function(err, req, res, next) {
   res.status(err.status || 500);
   res.render('error');
 });
-
-app.listen(3000);
 
 module.exports = app;
