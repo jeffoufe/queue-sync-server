@@ -8,9 +8,10 @@ const MongoClient = require('mongodb').MongoClient;
 var indexRouter = require('./routes/index');
 var partiesRouter = require('./routes/parties');
 var playlistsRouter = require('./routes/playlists');
+var tracksRouter = require('./routes/tracks');
+var scPlaylistsRouter = require('./routes/scPlaylists');
 
 var app = express();
-
 app.use(express.static(path.join(__dirname, 'public'))); 
 
 const uri = "mongodb+srv://jeffoufe:Laporeille51@cluster0-wkpnb.mongodb.net/test?retryWrites=true&w=majority";
@@ -33,6 +34,8 @@ app.use(cookieParser());
 app.use('/', indexRouter);
 app.use('/parties', partiesRouter);
 app.use('/parties/:userId/playlists', playlistsRouter)
+app.use('/parties/:userId/tracks', tracksRouter)
+app.use('/parties/:userId/sc-playlists', scPlaylistsRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
