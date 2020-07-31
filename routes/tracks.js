@@ -3,14 +3,35 @@ const router = express.Router({ mergeParams: true });
 const ObjectID = require('mongodb').ObjectID;
 const fs = require('fs');
 const getParty = require('../utils/getParty');
+const search = require('../utils/search/index');
+const formatTrack = require('../utils/format/index');
 // const YoutubeMp3Downloader = require("youtube-mp3-downloader");
+
+router.get('/search', async (req, res) => {
+    const { type, q } = req.query;
+    const tracks = await search(q, type);
+    const formattedTracks = tracks.map((track) => formatTrack(track, req.params.userId))
+    res.json({
+        tracks: formattedTracks,
+        provider: type === '0' ? 'spotify' : 'soundcloud'
+    }); 
+})
 
 router.post('/', async (req, res) => {
     const { tracks } = req.body;
+    const bulkWriteResult = await req.app.locals.tracks.insertMany(tracks);
+    const ids = bulkWriteResult.ops.map(document => ObjectID(document['_id']));
     await req.app.locals.parties.updateOne(
         { _id: ObjectID(req.params.userId) },
-        { $push: { tracks: { $each: tracks } } }
+        { $push: { tracks: { $each: ids } } }
     )
+    const party = await getParty(req, req.params.userId);
+    res.json(party);
+
+    /* await req.app.locals.parties.updateOne(
+        { _id: ObjectID(req.params.userId) },
+        { $push: { tracks: { $each: tracks } } }
+    ) */
     /* if (track.type === "youtube") {
         const YD = new YoutubeMp3Downloader({
             "ffmpegPath": "/usr/local/bin/ffmpeg",        // Where is the FFmpeg binary located?
@@ -40,8 +61,6 @@ router.post('/', async (req, res) => {
         const party = await getParty(req.params.userId);
         res.json(party);
     } */
-    const party = await getParty(req, req.params.userId);
-    res.json(party);
 })
 
 router.get('/:trackId/stream', async (req, res) => {

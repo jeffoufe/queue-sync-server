@@ -20,6 +20,7 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
 client.connect(async (err) => {
   app.locals.parties = client.db('QueueSync').collection('parties');
   app.locals.playlists = client.db('QueueSync').collection('playlists');
+  app.locals.tracks = client.db('QueueSync').collection('tracks');
 });
 
 // view engine setup

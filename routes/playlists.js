@@ -1,6 +1,10 @@
 const express = require('express');
 const router = express.Router({ mergeParams: true });
 const ObjectID = require('mongodb').ObjectID;
+const searchPlaylist = require('../utils/searchPlaylist/index')
+const formatPlaylist = require('../utils/formatPlaylist/index')
+const formatTrack = require('../utils/format/index')
+const getPlaylistTracks = require('../utils/playlistTracks/index');
 
 router.get('/', async (req, res) => {
     const items = await req.app.locals.playlists.find({ userId: req.params.userId }).toArray();
@@ -29,6 +33,20 @@ router.post('/', async (req, res) => {
             }
         }
     );
+})
+
+router.get('/search', async (req, res) => {
+    const { type, q } = req.query;
+    const playlists = await searchPlaylist(q, type);
+    const formattedPlaylists = playlists.map((playlist) => formatPlaylist(playlist))
+    res.json({ playlists: formattedPlaylists }); 
+})
+
+router.get('/:playlistId/tracks', async (req, res) => {
+    const { type } = req.query;
+    const tracks = await getPlaylistTracks(req, type);
+    const formattedTracks = tracks.map((track) => formatTrack(track))
+    res.json({ tracks: formattedTracks });
 })
 
 router.get('/:playlistId', async (req, res) => {
