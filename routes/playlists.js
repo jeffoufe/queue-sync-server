@@ -7,8 +7,9 @@ const formatTrack = require('../utils/format/index')
 const getPlaylistTracks = require('../utils/playlistTracks/index');
 
 router.get('/', async (req, res) => {
-    const items = await req.app.locals.playlists.find({ userId: req.params.userId }).toArray();
-    res.json({ items });
+    const playlists = await getPlaylists(req);
+    const formattedPlaylists = playlists.map(formatPlaylist);
+    res.json({ playlists: formmattedPlaylists });
 })
 
 router.post('/', async (req, res) => {

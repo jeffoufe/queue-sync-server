@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const getParty = require('../utils/getParty');
 const authorize = require('../utils/authorize/index');
+const logout = require('../utils/logout/index');
 
 router.get('/', async (req, res, next) => {
     const parties = await req.app.locals.parties.find({}).toArray();
@@ -35,8 +36,20 @@ router.get('/:userId', async (req, res) => {
         tracks
     }); 
 })
+
 router.post('/:userId/authorize', async (req, res) => {
     await authorize(req);
+    const party = await getParty(req, req.params.userId);
+    res.json({ credentials: party.credentials });
+});
+
+router.get('/:userId/logout', async (req, res) => {
+    await logout(req);
+    const party = await getParty(req, req.params.userId);
+    res.json({ credentials: party.credentials });
+});
+
+router.get('/:userId/credentials', async (req, res) => {
     const party = await getParty(req, req.params.userId);
     res.json({ credentials: party.credentials });
 });
