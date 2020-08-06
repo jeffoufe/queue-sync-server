@@ -1,14 +1,14 @@
 const searchSpotify = require('./spotify');
 const searchSoundCloud = require('./soundcloud');
 
-const search = async (search, type) => {
+const search = async (req) => {
     let tracks;
-    switch (type) {
+    switch (req.query.type) {
         case '0':
-            tracks = await searchSpotify(search);
+            tracks = await searchSpotify(req);
             break;
         case '1':
-            tracks = await searchSoundCloud(search);
+            tracks = await searchSoundCloud(req);
             break;
         default:
             break;

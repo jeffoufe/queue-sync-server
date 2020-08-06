@@ -5,11 +5,12 @@ const fs = require('fs');
 const getParty = require('../utils/getParty');
 const search = require('../utils/search/index');
 const formatTrack = require('../utils/format/index');
+const getFullParty = require('../utils/getFullParty');
 // const YoutubeMp3Downloader = require("youtube-mp3-downloader");
 
 router.get('/search', async (req, res) => {
-    const { type, q } = req.query;
-    const tracks = await search(q, type);
+    const { type } = req.query;
+    const tracks = await search(req);
     const formattedTracks = tracks.map((track) => formatTrack(track, req.params.userId))
     res.json({
         tracks: formattedTracks,
@@ -25,7 +26,7 @@ router.post('/', async (req, res) => {
         { _id: ObjectID(req.params.userId) },
         { $push: { tracks: { $each: ids } } }
     )
-    const party = await getParty(req, req.params.userId);
+    const party = await getFullParty(req);
     res.json(party);
 
     /* await req.app.locals.parties.updateOne(
@@ -80,9 +81,12 @@ router.get('/:trackId/stream', async (req, res) => {
 router.delete('/:trackId', async (req, res) => {
     await req.app.locals.parties.updateOne(
         { _id: ObjectID(req.params.userId) },
-        { $pull: { tracks: { id: req.params.trackId } } }
+        { $pull: { tracks: ObjectID(req.params.trackId) } }
     )
-    const party = await getParty(req, req.params.userId);
+    await req.app.locals.tracks.remove(
+        { _id: ObjectID(req.params.trackId) }
+    );
+    const party = await getFullParty(req);
     res.json(party);
 })
 

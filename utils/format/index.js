@@ -8,6 +8,8 @@ const formatTrack = (track, userId) => {
                 return formatSpotifyTrack;
             case 1:
                 return formatSoundCloudTrack;
+            case -1:
+                return track => track;
             default:
                 return null;
         }

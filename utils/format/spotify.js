@@ -3,7 +3,7 @@ const formatSpotifyTrack = (track, userId) => ({
     name: track.name,
     id: `${track.id}`,
     isPlayed: false,
-    type: PROVIDERS[SPOTIFY],
+    type: track.type,
     userId,
     type: track.type,
     duration: track['duration_ms'],

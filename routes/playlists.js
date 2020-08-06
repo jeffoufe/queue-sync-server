@@ -5,11 +5,15 @@ const searchPlaylist = require('../utils/searchPlaylist/index')
 const formatPlaylist = require('../utils/formatPlaylist/index')
 const formatTrack = require('../utils/format/index')
 const getPlaylistTracks = require('../utils/playlistTracks/index');
+const getPlaylists = require('../utils/playlists/index');
+const getPlaylist = require('../utils/playlist/index');
 
 router.get('/', async (req, res) => {
-    const playlists = await getPlaylists(req);
-    const formattedPlaylists = playlists.map(formatPlaylist);
-    res.json({ playlists: formmattedPlaylists });
+    let playlists = await getPlaylists(req);
+    if (req.query.type !== '1') {
+        playlists = playlists.map(formatPlaylist);
+    }
+    res.json({ playlists });
 })
 
 router.post('/', async (req, res) => {
@@ -43,16 +47,21 @@ router.get('/search', async (req, res) => {
     res.json({ playlists: formattedPlaylists }); 
 })
 
-router.get('/:playlistId/tracks', async (req, res) => {
+/* router.get('/:playlistId/tracks', async (req, res) => {
     const { type } = req.query;
     const tracks = await getPlaylistTracks(req, type);
     const formattedTracks = tracks.map((track) => formatTrack(track))
     res.json({ tracks: formattedTracks });
-})
+}) */
 
 router.get('/:playlistId', async (req, res) => {
-    const playlist = await req.app.locals.playlists.find(ObjectID(req.params.playlistId)).toArray()[0];
-    res.json(playlist);
+    let playlist = await getPlaylist(req);
+    const tracks = await getPlaylistTracks(req);
+    const formattedTracks = (tracks || []).map((track) => formatTrack(track))
+    if (req.query.type !== '1') {
+        playlist = formatPlaylist(playlist);
+    }
+    res.json({ ...playlist, tracks: formattedTracks });
 })
 
 router.post('/:playlistId/track', async (req, res) => {

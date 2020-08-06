@@ -1,4 +1,5 @@
 const fetch = require('node-fetch');
+const getAccessToken = require('../getAccessToken');
 
 const getSpotifyPlaylists = async (req) => {
     const accessToken = await getAccessToken(req);
@@ -10,7 +11,8 @@ const getSpotifyPlaylists = async (req) => {
             }
         }
     );
-    return response.items.map((item) => ({ ...item, type: 0 }));
+    const responseJSON = await response.json();
+    return responseJSON.items.map((item) => ({ ...item, type: 0 }));
 }
 
 module.exports = getSpotifyPlaylists;
