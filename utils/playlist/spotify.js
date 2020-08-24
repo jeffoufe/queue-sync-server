@@ -12,7 +12,7 @@ const getSpotifyPlaylist = async (req) => {
         }
     );
     const responseJSON = await response.json();
-    return { ...responseJSON, type: 0 };
+    return { ...responseJSON, type: 0, total: responseJSON.tracks.total };
 }
 
 module.exports = getSpotifyPlaylist;

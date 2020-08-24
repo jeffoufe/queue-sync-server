@@ -5,7 +5,6 @@ const formatPlaylist = (playlist) => {
     const formatFn = (() => {
         switch (playlist.type) {
             case -1:
-                console.log(playlist);
                 return playlist => ({ ...playlist, id: playlist['_id'] });
             case 0:
                 return formatSpotifyPlaylist;
