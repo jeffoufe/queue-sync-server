@@ -1,11 +1,12 @@
 const formatSoundCloudPlaylist = require('./soundcloud');
 const formatSpotifyPlaylist = require('./spotify');
+const formatMixedPlaylist = require('./mixed');
 
 const formatPlaylist = (playlist) => {
     const formatFn = (() => {
         switch (playlist.type) {
             case -1:
-                return playlist => ({ ...playlist, id: playlist['_id'] });
+                return formatMixedPlaylist;
             case 0:
                 return formatSpotifyPlaylist;
             case 1:

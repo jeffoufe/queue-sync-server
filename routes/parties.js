@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const getParty = require('../utils/getParty');
 const authorize = require('../utils/authorize/index');
+const selectDevice = require('../utils/selectDevice');
 const logout = require('../utils/logout/index');
 const getFullParty = require('../utils/getFullParty');
 
@@ -31,6 +32,12 @@ router.get('/:userId', async (req, res) => {
     const party = await getFullParty(req);
     res.json(party); 
 })
+
+router.post('/:userId/selectDevice', async (req, res) => {
+    await selectDevice(req);
+    const party = await getParty(req, req.params.userId);
+    res.json({ credentials: party.credentials });
+});
 
 router.post('/:userId/authorize', async (req, res) => {
     await authorize(req);

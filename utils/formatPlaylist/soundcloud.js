@@ -3,6 +3,7 @@ const formatSoundCloudPlaylist = (playlist) => ({
     artist: `${playlist.track_count} tracks`,
     name: playlist.title,
     ids: playlist.tracks.map((track) => track.id),
+    total: playlist.tracks.length,
     id: `${playlist.id}`,
     type: playlist.type,
 })
