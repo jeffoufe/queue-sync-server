@@ -22,14 +22,14 @@ router.post('/', async (req, res) => {
     const { tracks } = req.body;
     const bulkWriteResult = await req.app.locals.tracks.insertMany(tracks);
     const ids = bulkWriteResult.ops.map(document => ObjectID(document['_id']));
-    await req.app.locals.parties.updateOne(
+    await req.app.locals.users.updateOne(
         { _id: ObjectID(req.params.userId) },
         { $push: { tracks: { $each: ids } } }
     )
     const party = await getFullParty(req);
     res.json(party);
 
-    /* await req.app.locals.parties.updateOne(
+    /* await req.app.locals.users.updateOne(
         { _id: ObjectID(req.params.userId) },
         { $push: { tracks: { $each: tracks } } }
     ) */
@@ -43,7 +43,7 @@ router.post('/', async (req, res) => {
         });
         YD.download(track.id);
         YD.on("finished", async (err, data) => {
-            await req.app.locals.parties.updateOne(
+            await req.app.locals.users.updateOne(
                 { _id: ObjectID(req.params.userId) },
                 { $set: { "tracks.$[elem].file" : data.file } },
                 { arrayFilters: [{ "elem.id": track.id }] }
@@ -52,7 +52,7 @@ router.post('/', async (req, res) => {
             res.json(party);
         });
         YD.on("progress", (progress) => {
-            req.app.locals.parties.updateOne(
+            req.app.locals.users.updateOne(
                 { _id: ObjectID(req.params.userId) },
                 { $set: { "tracks.$[elem].progress" : progress.progress.percentage } },
                 { arrayFilters: [{ "elem.id": track.id }] }
@@ -79,7 +79,7 @@ router.get('/:trackId/stream', async (req, res) => {
 })
 
 router.delete('/:trackId', async (req, res) => {
-    await req.app.locals.parties.updateOne(
+    await req.app.locals.users.updateOne(
         { _id: ObjectID(req.params.userId) },
         { $pull: { tracks: ObjectID(req.params.trackId) } }
     )

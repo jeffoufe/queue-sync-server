@@ -7,12 +7,12 @@ const logout = require('../utils/logout/index');
 const getFullParty = require('../utils/getFullParty');
 
 router.get('/', async (req, res) => {
-    const parties = await req.app.locals.parties.find({}).toArray();
-    res.json({ parties });
+    const users = await req.app.locals.users.find({}).toArray();
+    res.json({ users });
 });
 
 router.post('/', async (req, res) => {
-    await req.app.locals.parties.insertOne({ 
+    await req.app.locals.users.insertOne({ 
         tracks: [],
         soundCloudPlaylists: [],
         credentials: {},
@@ -35,24 +35,24 @@ router.get('/:userId', async (req, res) => {
 
 router.post('/:userId/selectDevice', async (req, res) => {
     await selectDevice(req);
-    const party = await getParty(req, req.params.userId);
+    const party = await getParty(req);
     res.json({ credentials: party.credentials });
 });
 
 router.post('/:userId/authorize', async (req, res) => {
     await authorize(req);
-    const party = await getParty(req, req.params.userId);
+    const party = await getParty(req);
     res.json({ credentials: party.credentials });
 });
 
 router.post('/:userId/logout', async (req, res) => {
     await logout(req);
-    const party = await getParty(req, req.params.userId);
+    const party = await getParty(req);
     res.json({ credentials: party.credentials });
 });
 
 router.get('/:userId/credentials', async (req, res) => {
-    const party = await getParty(req, req.params.userId);
+    const party = await getParty(req);
     res.json({ credentials: party.credentials });
 });
 

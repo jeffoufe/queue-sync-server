@@ -6,7 +6,7 @@ var logger = require('morgan');
 const MongoClient = require('mongodb').MongoClient;
 
 var indexRouter = require('./routes/index');
-var partiesRouter = require('./routes/parties');
+var usersRouter = require('./routes/users');
 var playlistsRouter = require('./routes/playlists');
 var tracksRouter = require('./routes/tracks');
 var scPlaylistsRouter = require('./routes/scPlaylists');
@@ -18,7 +18,7 @@ const uri = "mongodb+srv://jeffoufe:Laporeille51@cluster0-wkpnb.mongodb.net/test
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
 
 client.connect(async (err) => {
-  app.locals.parties = client.db('QueueSync').collection('parties');
+  app.locals.users = client.db('QueueSync').collection('users');
   app.locals.playlists = client.db('QueueSync').collection('playlists');
   app.locals.tracks = client.db('QueueSync').collection('tracks');
 });
@@ -33,10 +33,10 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 
 app.use('/', indexRouter);
-app.use('/parties', partiesRouter);
-app.use('/parties/:userId/playlists', playlistsRouter)
-app.use('/parties/:userId/tracks', tracksRouter)
-app.use('/parties/:userId/sc-playlists', scPlaylistsRouter);
+app.use('/users', usersRouter);
+app.use('/users/:userId/playlists', playlistsRouter)
+app.use('/users/:userId/tracks', tracksRouter)
+app.use('/users/:userId/sc-playlists', scPlaylistsRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

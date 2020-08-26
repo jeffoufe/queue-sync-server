@@ -7,9 +7,9 @@ const formatSpotify = (spotify) => ({
     deviceID: spotify.deviceID
 })
 
-const authorizeSpotify = async (req, payload) => {
-    const spotify = formatSpotify(payload);
-    await req.app.locals.parties.updateOne(
+const authorizeSpotify = async (req) => {
+    const spotify = formatSpotify(req.body);
+    await req.app.locals.users.updateOne(
         { _id: ObjectID(req.params.userId) },
         { $set: { "credentials.spotify": spotify } }
     )

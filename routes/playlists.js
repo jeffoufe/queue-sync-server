@@ -30,7 +30,7 @@ router.post('/', async (req, res) => {
             if (error) {
                 res.send(err);
             } else {
-                await req.app.locals.parties.updateOne(
+                await req.app.locals.users.updateOne(
                     { _id: ObjectID(req.params.userId) },
                     { $push: { playlists: documentInserted.ops[0]['_id'] } }
                 )

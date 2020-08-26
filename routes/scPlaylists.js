@@ -5,7 +5,7 @@ const getParty = require('../utils/getParty');
 
 router.post('/', async (req, res) => {
     const { playlist } = req.body;
-    await req.app.locals.parties.updateOne(
+    await req.app.locals.users.updateOne(
         { _id: ObjectID(req.params.userId) },
         { $push: { soundCloudPlaylists: playlist } }
     )
@@ -13,7 +13,7 @@ router.post('/', async (req, res) => {
 })
 
 router.delete('/:playlistId', async (req, res) => {
-    await req.app.locals.parties.updateOne(
+    await req.app.locals.users.updateOne(
         { _id: ObjectID(req.params.userId) },
         { $pull: { soundCloudPlaylists: { id: req.params.playlistId } } }
     );
