@@ -6,6 +6,7 @@ const getParty = require('../utils/getParty');
 const search = require('../utils/search/index');
 const formatTrack = require('../utils/format/index');
 const getFullParty = require('../utils/getFullParty');
+const toggle = require('../utils/toggle');
 // const YoutubeMp3Downloader = require("youtube-mp3-downloader");
 
 router.get('/search', async (req, res) => {
@@ -81,11 +82,17 @@ router.get('/:trackId/stream', async (req, res) => {
 router.delete('/:trackId', async (req, res) => {
     await req.app.locals.users.updateOne(
         { _id: ObjectID(req.params.userId) },
-        { $pull: { tracks: ObjectID(req.params.trackId) } }
+        { $pull: { tracks: { _id: ObjectID(req.params.trackId) } } }
     )
+
     await req.app.locals.tracks.remove(
         { _id: ObjectID(req.params.trackId) }
     );
+
+    if (req.query.nextSong) {
+        toggle(req, true)
+    }
+
     const party = await getFullParty(req);
     res.json(party);
 })

@@ -56,4 +56,16 @@ router.get('/:userId/credentials', async (req, res) => {
     res.json({ credentials: party.credentials });
 });
 
+router.put('/:userId/play', async (req) => {
+    await toggle(req, true);
+    const party = await getFullParty(req);
+    res.json(party);
+});
+
+router.put('/:userId/pause', async (req) => {
+    await toggle(req, false);
+    const party = await getFullParty(req);
+    res.json(party);
+});
+
 module.exports = router
